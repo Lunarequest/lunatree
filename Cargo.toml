@@ -1,0 +1,12 @@
+[package]
+name = "lunatree"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+rocket = { git = "https://github.com/sergioBenitez/Rocket.git"}
+diesel = "1.4.8"
+rocket_sync_db_pools = { git = "https://github.com/sergioBenitez/Rocket.git", features = ["diesel_postgres_pool"] }
+diesel_migrations = "1.4.0"
