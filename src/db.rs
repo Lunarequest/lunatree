@@ -1,5 +1,5 @@
-use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
-use rocket::{Build, Rocket};
+use diesel_migrations::embed_migrations;
+use rocket::{Build, Rocket, fairing::AdHoc};
 use rocket_sync_db_pools::{database, diesel::PgConnection};
 
 #[database("lunatreedb")]
@@ -19,4 +19,12 @@ async fn run_migrations(rocket: Rocket<Build>) -> Rocket<Build> {
         .expect("diesel migrations");
 
     rocket
+}
+
+pub fn stage() -> AdHoc {
+    AdHoc::on_ignite("setup database", |rocket| async {
+        rocket.attach(LunaTreeDbConn::fairing())
+              .attach(AdHoc::on_ignite("run migrations on db", run_migrations))
+     }
+  )
 }
