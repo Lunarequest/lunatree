@@ -1,7 +1,9 @@
 {
   inputs = {
-    flake-utils.url = "github:numtide/flake-utils";
-    naersk.url = "github:nix-community/naersk";
+    naersk = {
+      url = "github:nix-community/naersk";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     flake-compat-ci.url = "github:hercules-ci/flake-compat-ci";
     flake-compat = {
       url = "github:edolstra/flake-compat";
@@ -9,37 +11,35 @@
     };
   };
 
-  outputs = { self, nixpkgs, flake-utils,flake-compat, flake-compat-ci, naersk }:
-    flake-utils.lib.eachDefaultSystem (system:
-      let
-        pkgs = nixpkgs.legacyPackages."${system}";
-        naersk-lib = naersk.lib."${system}";
-        buildEnvVars = {
-          PKG_CONFIG_PATH = "${pkgs.openssl.dev}/lib/pkgconfig";
-        };
-      in rec {
-        # `nix build`
-        packages.lunatree = naersk-lib.buildPackage {
+  outputs = { self, nixpkgs, naersk, flake-compat, flake-compat-ci, }:
+    let
+      supportedSystems = [ "x86_64-linux" "i686-linux" "aarch64-linux" ];
+      genSystems = nixpkgs.lib.genAttrs supportedSystems;
+      pkgsFor = nixpkgs.legacyPackages;
+      buildEnvVars = pkgs: {
+        PKG_CONFIG_PATH =
+          "${pkgs.openssl.dev}/lib/pkgconfig;${pkgs.postgresql.dev}/lib/pkgconfig";
+      };
+    in {
+      packages = genSystems (system: rec {
+        lunatree = naersk.lib.${system}.buildPackage {
           pname = "lunatree";
           root = ./.;
-          nativeBuildInputs = [ pkgs.pkgconfig pkgs.openssl ];
+          nativeBuildInputs = with pkgsFor.${system}; [ pkgconfig openssl ];
         };
-        defaultPackage = packages.lunatree;
-
-        # `nix run`
-        apps.hello-world =
-          flake-utils.lib.mkApp { drv = packages.lunatree; };
-        defaultApp = apps.coudflareupdated;
-
-        # `nix develop`
-        devShell = pkgs.mkShell {
-          nativeBuildInputs = with pkgs; [ rustc cargo openssl diesel-cli pkgconfig ];
-          shellHook = ''
-            test -f ~/.zshrc && exec zsh
-          '';
-        } // buildEnvVars;
-
-        ciNix = flake-compat-ci.lib.recurseIntoFlakeWith { flake = self; }
-          // buildEnvVars;
+        default = lunatree;
       });
+
+      devShells = genSystems (system: {
+        default = with pkgsFor.${system};
+          mkShell ({
+            packages = [ zsh diesel rustc cargo openssl pkgconfig ];
+            shellHook = ''
+              test -f ~/.zshrc && exec zsh
+            '';
+          } // buildEnvVars pkgsFor.${system});
+      });
+
+      ciNix = flake-compat-ci.lib.recurseIntoFlakeWith { flake = self; };
+    };
 }

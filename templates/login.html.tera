@@ -1,0 +1,11 @@
+{% extends "base" %}
+
+{% block content %}
+    <div>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="/">Lunatree</a>
+            </div>
+        </nav>
+    </div>
+{% endblock content %}

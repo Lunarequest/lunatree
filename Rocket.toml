@@ -1,2 +1,2 @@
 [global.databases]
-lunatreedb = { url = "postgres://luna:luna@localhost:5432": }
+lunatreedb = { url = "postgres://luna:luna@localhost:5432" }

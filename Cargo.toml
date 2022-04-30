@@ -7,6 +7,7 @@ edition = "2021"
 
 [dependencies]
 rocket = { git = "https://github.com/sergioBenitez/Rocket.git"}
-diesel = "1.4.8"
+rocket_dyn_templates = { git = "https://github.com/sergioBenitez/Rocket.git", features = ["tera"]}
 rocket_sync_db_pools = { git = "https://github.com/sergioBenitez/Rocket.git", features = ["diesel_postgres_pool"] }
+diesel = "1.4.8"
 diesel_migrations = "1.4.0"
