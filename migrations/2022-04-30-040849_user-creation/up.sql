@@ -1,10 +1,10 @@
 -- Your SQL goes here
 CREATE TABLE users (
     userid SERIAL PRIMARY KEY,
-    username varchar(50) UNIQUE,
-    password varchar(300),
-    email varchar(255),
-    active bool
+    username varchar(50) NOT NULL,
+    password varchar(300) NOT NULL,
+    email varchar(255) UNIQUE NOT NULL,
+    active bool NOT NULL
 );
 
 ALTER TABLE users

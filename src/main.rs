@@ -10,7 +10,7 @@ mod db;
 mod schema;
 mod users;
 
-const BRANDING: &'static str = "lunatree";
+const BRANDING: &str = "lunatree";
 
 #[get("/")]
 fn index() -> &'static str {
