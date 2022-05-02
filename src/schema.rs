@@ -4,5 +4,6 @@ table! {
 		username -> Nullable<Varchar>,
 		password -> Nullable<Varchar>,
 		email -> Nullable<Varchar>,
+		active -> Nullable<Bool>,
 	}
 }

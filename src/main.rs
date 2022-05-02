@@ -10,6 +10,8 @@ mod db;
 mod schema;
 mod users;
 
+const BRANDING: &'static str = "lunatree";
+
 #[get("/")]
 fn index() -> &'static str {
 	"Hello, world!"
