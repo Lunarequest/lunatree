@@ -53,7 +53,7 @@ impl NewUser {
 				return Argon2::default()
 					.verify_password(password.as_bytes(), &hash)
 					.is_ok();
-			},
+			}
 			Err(_) => false,
 		}
 	}

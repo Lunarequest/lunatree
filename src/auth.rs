@@ -43,26 +43,28 @@ async fn register_post(
 				user.username.to_string(),
 				user.passwd1.to_string(),
 				user.email.to_string(),
-			); 
-            match dbuser {
-			Ok(dbuser) => {match conn
-				.run(move |c| diesel::insert_into(users::table).values(&dbuser).execute(c))
-				.await
-			{
-				Ok(_) => {
-					return Ok(Redirect::to(uri!("/")));
+			);
+			match dbuser {
+				Ok(dbuser) => {
+					match conn
+						.run(move |c| diesel::insert_into(users::table).values(&dbuser).execute(c))
+						.await
+					{
+						Ok(_) => {
+							return Ok(Redirect::to(uri!("/")));
+						}
+						Err(e) => {
+							return Err(Flash::error(Redirect::to(uri!(register)), format!("{e}")));
+						}
+					}
 				}
 				Err(e) => {
-					return Err(Flash::error(Redirect::to(uri!(register)), format!("{e}")));
+					return Err(Flash::error(
+						Redirect::to(uri!(register)),
+						format!("unkown error please report to admin tracedump: {}", e),
+					));
 				}
-			}},
-            Err(e) => {
-                return Err(Flash::error(
-                    Redirect::to(uri!(register)),
-                    format!("unkown error please report to admin tracedump: {}",e)
-                ));
-            }
-            };
+			};
 		} else {
 			return Err(Flash::error(
 				Redirect::to(uri!(register)),
