@@ -32,6 +32,12 @@ pub struct UserForm<'r> {
 	pub passwd2: &'r str,
 }
 
+#[derive(FromForm, Debug, Clone)]
+pub struct LoginForm<'r> {
+    pub email: &'r str,
+    pub password: &'r str
+}
+
 impl NewUser {
 	pub fn new(username: String, password: String, email: String) -> Result<Self, Error> {
 		let argon2 = Argon2::default();
@@ -46,7 +52,10 @@ impl NewUser {
 			email,
 		})
 	}
-	pub async fn verify_password(self, password: String) -> bool {
+}
+
+impl User {
+    pub async fn verify_password(self, password: String) -> bool {
 		let parsed_hash = PasswordHash::new(&self.password);
 		match parsed_hash {
 			Ok(hash) => {
@@ -57,4 +66,5 @@ impl NewUser {
 			Err(_) => false,
 		}
 	}
+
 }

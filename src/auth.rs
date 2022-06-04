@@ -10,7 +10,7 @@ use rocket::request::FlashMessage;
 use rocket::response::{Flash, Redirect};
 use rocket_dyn_templates::{context, Template};
 
-#[get("/login/messages")]
+#[get("/login")]
 async fn login(messages: Option<FlashMessage<'_>>) -> Template {
 	Template::render(
 		"login",
@@ -19,6 +19,11 @@ async fn login(messages: Option<FlashMessage<'_>>) -> Template {
 			 brand: BRANDING
 		},
 	)
+}
+
+#[post("/login", data = "<user>")]
+async fn login_post(user: Form<LoginForm<'_>>) {
+
 }
 
 #[get("/register")]
@@ -81,6 +86,6 @@ async fn register_post(
 
 pub fn stage() -> AdHoc {
 	AdHoc::on_ignite("User Authentication", |rocket| async {
-		rocket.mount("/", routes![login, register, register_post])
+		rocket.mount("/", routes![login, login_post, register, register_post])
 	})
 }

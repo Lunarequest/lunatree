@@ -25,7 +25,7 @@
         lunatree = naersk.lib.${system}.buildPackage {
           pname = "lunatree";
           root = ./.;
-          nativeBuildInputs = with pkgsFor.${system}; [ pkgconfig openssl ];
+          nativeBuildInputs = with pkgsFor.${system}; [ pkgconfig openssl clang mold ];
         };
         default = lunatree;
       });
@@ -33,7 +33,7 @@
       devShells = genSystems (system: {
         default = with pkgsFor.${system};
           mkShell ({
-            packages = [ zsh diesel rustc cargo openssl pkgconfig ];
+            packages = [ zsh diesel rustc cargo openssl pkgconfig clang mold ];
             shellHook = ''
               test -f ~/.zshrc && exec zsh
             '';
